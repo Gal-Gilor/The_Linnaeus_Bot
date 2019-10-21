@@ -9,7 +9,7 @@ import joblib as jb
 import itertools
 import cv2
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, recall_accuracy
+from sklearn.metrics import accuracy_score, confusion_matrix, recall_score
 import pydot
 import tensorflow as tf
 from tensorflow import keras
@@ -22,8 +22,6 @@ from keras import backend as k
 plt.rcParams['axes.spines.right'] = False
 plt.rcParams['axes.spines.top'] = False
 
-
-ima
 ## Image processing
 
 
@@ -464,7 +462,7 @@ def plot_intermediate_activation(model, images, bottom=0, top=3, save=False):
     layer_names = [layer.name for layer in model.layers[bottom:top]]
     
     # Define how the amount of images per row
-    images_per_row = 8
+    images_per_row = 16
     
     for layer_name, layer_activation in zip(layer_names, activations): 
         n_features = layer_activation.shape[-1] # number of features
@@ -491,8 +489,8 @@ def plot_intermediate_activation(model, images, bottom=0, top=3, save=False):
         plt.title(layer_name)
         plt.imshow(display_grid, aspect='auto', cmap='viridis')
         if save:
-            plt.savefig(f'activation_{bottom}_vis.jpg')
-            bottom += 1
+            plt.savefig(f'activation_{save}_vis.jpg')
+            save += 1
     return
 
 
@@ -517,3 +515,67 @@ def print_metrics(labels, predictions, print_score=True):
         print(f"Accuracy: {acc}")
 
     return recall, acc
+
+
+def plot_confusion_matrix(y_test, y_pred, class_names, save=None):
+    '''
+    plot_confusion_matrix(y_test, y_pred, class_names, save=False, name='name')
+    Params:
+        y_test: list. The true labels
+        y_pred: list. The model's labels
+        class_names: list, the classes names'
+        save: Default=None. Saves the image as png
+        
+    Returns:
+        Returns confusion matrix plot
+    '''
+    matfig = plt.figure(figsize=(11,10))
+    matrix = hlf.confusion_matrix(y_test, y_pred)
+    plt.matshow(matrix, cmap=plt.cm.Purples, aspect=1.2, 
+                alpha=0.6, fignum=matfig.number)
+    plt.grid(b=None)
+    # add color bar
+    plt.colorbar()
+
+    # add title and Axis Labels
+    plt.title('Confusion Matrix', fontsize=20)
+    plt.ylabel('Actual', fontsize=16)
+    plt.xlabel('Predicted', fontsize=16)
+
+    # add appropriate Axis Scales
+    tick_marks = np.arange(len(class_names))
+    plt.xticks(tick_marks, class_names, rotation=45)
+    plt.yticks(tick_marks, class_names)
+    plt.grid(b=None)
+
+    # add Labels to Each Cell
+    thresh = matrix.max() / 2.  
+
+    # iterate through the confusion matrix and append the labels
+    for i, j in itertools.product(range(matrix.shape[0]), 
+                                  range(matrix.shape[1])):
+        plt.text(j, i, matrix[i, j], 
+                 horizontalalignment="center",
+                 color="black")
+
+    plt.grid(b=None)
+    if save:
+        plt.grid(b=None)
+        plt.tight_layout()
+        plt.savefig(f'{save}_cm.png')
+    return
+
+
+def find_wrong_classification(images, labels, predictions):
+    '''
+    This function finds misclassifcation
+    find_wrong_classification(images, labels, predictions):
+    Input:
+        images: Images
+        labels: Actual labels
+        prediction: Predicted labels
+    Returns:
+        All the misclassified images
+    '''
+    indices =  np.where(labels != predictions)
+    return images[indices]
