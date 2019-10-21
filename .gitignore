@@ -106,3 +106,9 @@ venv.bak/
 
 # ignore saved models
 .sav
+
+# train_histroy
+train_history
+
+# pickles
+.pkl
