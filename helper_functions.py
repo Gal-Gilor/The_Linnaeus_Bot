@@ -9,7 +9,7 @@ import joblib as jb
 import itertools
 import cv2
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, recall_accuracy
 import pydot
 import tensorflow as tf
 from tensorflow import keras
@@ -23,7 +23,7 @@ plt.rcParams['axes.spines.right'] = False
 plt.rcParams['axes.spines.top'] = False
 
 
-
+ima
 ## Image processing
 
 
@@ -494,3 +494,26 @@ def plot_intermediate_activation(model, images, bottom=0, top=3, save=False):
             plt.savefig(f'activation_{bottom}_vis.jpg')
             bottom += 1
     return
+
+
+def print_metrics(labels, predictions, print_score=True):
+    '''
+    This function prints model metrics
+    print_metrics(labels, predictions, print_score=None):
+    Input:
+        labels: True labels
+        predictions: Model predictions
+        print_score: Optional, printing the scores
+    Returns:
+        2 variables, one for recall score and one for accuracy score
+    This function receives model predictions along with the actual labels
+        and returns the precision score, recall, accuracy and F1'''
+
+    recall = round(recall_score(labels, predictions)*100, 2)
+    acc = round(accuracy_score(labels, predictions)*100, 2)
+   
+    if print_score:
+        print(f"Recall: {recall}")
+        print(f"Accuracy: {acc}")
+
+    return recall, acc
