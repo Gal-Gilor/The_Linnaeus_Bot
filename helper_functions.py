@@ -10,18 +10,14 @@ import itertools
 import cv2
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
-
+import pydot
 import tensorflow as tf
 from tensorflow import keras
-from keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten
+from keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten, Input, MaxPool2D, UpSampling2D
 from keras.models import Sequential, load_model, Model
-from keras.utils import to_categorical, plot_model
+from keras.utils import to_categorical, plot_model, vis_utils
 from keras.preprocessing import image
 from keras import backend as k
-
-import pydot
-keras.utils.vis_utils.pydot = pydot
-from keras.utils.vis_utils import model_to_dot
 
 plt.rcParams['axes.spines.right'] = False
 plt.rcParams['axes.spines.top'] = False
@@ -108,7 +104,7 @@ def grayscale(images):
 
 
 # save images in a different path
-def save_preprocessed_images(processed_images, outpath, extension='jpg', start):
+def save_preprocessed_images(processed_images, outpath, start, extension='jpg'):
     '''
     save_preprocessed_images(processed_images, outpath, extension, start)
     This function saves any type of image in a specific directory
@@ -221,7 +217,7 @@ def create_model(weights_path=None, weights_name=None):
     model.add(Dense(2, activation='sigmoid'))
     
     model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])
-    
+    # optional: loading previous weights
     if weights_path and weights_name:
         model.load_weights(f'{weights_path}{weights_name}')
     return model
@@ -386,4 +382,115 @@ def plot_bar_graph(x, y, title, ytitle, xtitle, save=False):
     if save:
         fig.write_image(f'./Images/model_{save}.png')
     fig.show()
+    return
+
+
+def create_unsupervised_model(weights_path=None, weights_name=None, shape=(256, 256, 1)):
+    '''
+    This function create a keras Model with input shape of (256 256, 1)
+    create_unsupervised_model(weights_path=None, weights_name=None, shape=(256, 256, 1)):
+    Input:
+        weights_path: The full path to the model weights directory. default=None
+        weights_name: Weights file name. default=None
+        shape: input shape. default=(256, 256, 1)
+    Returns:
+        This model returns a compiled Model with input shape (256 256, 1)
+        and output shape of 1.
+    '''
+    input_dim = Input(shape=shape)
+
+    # encoded representation of the input
+    encoded = Conv2D(48, (3, 3), activation='relu', padding='same')(input_dim)
+    encoded = MaxPool2D((2, 2), padding='same')(encoded)
+
+    encoded = Conv2D(32, (3, 3), activation='relu', padding='same')(encoded)
+    encoded = MaxPool2D((2, 2), padding='same')(encoded)
+
+    encoded = Conv2D(16, (3, 3), activation='relu', padding='same')(encoded)
+    encoded = MaxPool2D((2, 2), padding='same')(encoded)
+
+    encoded = Conv2D(8, (3, 3), activation='relu', padding='same')(encoded)
+    encoded = MaxPool2D((2, 2), padding='same')(encoded)
+
+    # reconstruction of the input
+    decoded = Conv2D(8, (3, 3), activation='relu', padding='same')(encoded)
+    decoded = UpSampling2D((2, 2))(decoded)
+
+    decoded = Conv2D(16, (3, 3), activation='relu', padding='same')(decoded)
+    decoded = UpSampling2D((2, 2))(decoded)
+
+    decoded = Conv2D(32, (3, 3), activation='relu', padding='same')(decoded)
+    decoded = UpSampling2D((2, 2))(decoded)
+
+    decoded = Conv2D(48, (3, 3), activation='relu', padding='same')(decoded)
+    decoded = UpSampling2D((2, 2))(decoded)
+
+    decoded = Conv2D(1, (3, 3), padding='same')(decoded)
+
+    # define model input and output
+    model = Model(input_dim, decoded)
+    
+    #compile
+    model.compile(optimizer='Adam', loss='mse')
+    # optional: loading previous weights
+    if weights_path and weights_name:
+        model.load_weights(f'{weights_path}{weights_name}')
+        
+    return model
+
+
+
+def plot_intermediate_activation(model, images, bottom=0, top=3, save=False):
+    '''
+    This function plots the intermidiate interpartation of an image
+    plot_intermediate_activation(model, images, bottom=0, top=3, save=False):
+    Inputs:
+        model: Compiled keras model object
+        images: Numpy array containing image you want to disply
+        bottom: Which layer to begin showing
+        top: Which layer to stop showing
+        save: Optional, saving as .png image object. default=False
+    Returns:
+         Images displaying what each convolution layer detects        
+    '''
+    images = np.expand_dims(images, axis=-1)
+    
+    # extract layer's outputs
+    layer_outputs = [layer.output for layer in model.layers[bottom:top]]
+    
+    # Creates keras Model 
+    activation_model = Model(inputs=model.input, outputs=layer_outputs)
+    activations = activation_model.predict(images) 
+    layer_names = [layer.name for layer in model.layers[bottom:top]]
+    
+    # Define how the amount of images per row
+    images_per_row = 8
+    
+    for layer_name, layer_activation in zip(layer_names, activations): 
+        n_features = layer_activation.shape[-1] # number of features
+        size = layer_activation.shape[1] # feature map 
+        n_cols = n_features // images_per_row # tiles the activation channels 
+        display_grid = np.zeros((size * n_cols, images_per_row * size))
+        
+        for col in range(n_cols): # Tiles each filter into a big horizontal grid
+            for row in range(images_per_row):
+                # post-processes the features to visualize the activation layers
+                channel_image = layer_activation[0, :, :,
+                                                 col * images_per_row + row]
+                channel_image -= channel_image.mean() 
+                channel_image /= channel_image.std()  
+                channel_image *= 64                   
+                channel_image += 128                
+                channel_image = np.clip(channel_image, 0, 255).astype('uint8')
+                display_grid[col * size : (col + 1) * size, 
+                             row * size : (row + 1) * size] = channel_image
+    
+        scale = 1. / size
+        plt.figure(figsize=(scale * display_grid.shape[1],
+                            scale * display_grid.shape[0]))
+        plt.title(layer_name)
+        plt.imshow(display_grid, aspect='auto', cmap='viridis')
+        if save:
+            plt.savefig(f'activation_{bottom}_vis.jpg')
+            bottom += 1
     return
