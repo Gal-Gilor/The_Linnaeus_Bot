@@ -623,3 +623,41 @@ def plot_bar_graph(x, y, title, ytitle, xtitle):
     fig.update_yaxes(automargin=True)
     fig.show()
     return
+
+
+# un_classes = supervised_model.predict_classes(unsuper_images)
+def save_predict_class(model, images, labels, path):
+    '''
+    This function compiles and saves different prediction metrics
+    save_predict_class(model, images, labels):
+    Input:
+        model: Model object
+        images: NumPy array shape=(256, 256, 1)
+        labels: Actual labels
+    Returns:
+        A dictionary with the raw images, number of images, model accuracy, model loss,
+        model predictions,  predicted class names, actual labels, and 
+        misclassified images
+    '''
+    dictionary = {}
+    
+    # predict
+    preds = model.predict(images)
+    classes = model.predict_classes(images)
+    acc, loss = model.evaluate(images, labels)
+    misclassified = find_wrong_classification(images, labels, classes)
+    
+    # compile the results
+    dictionary['raw'] = images
+    dictionary['n_images'] = len(labels)
+    dictionary['acc'] = acc
+    dictionary['loss'] = loss
+    dictionary['pred_weights'] = preds
+    dictionary['pred_class'] = classes
+    dictionary['actual'] = labels
+    dictionary['misclassified'] = misclassified
+    
+    # save the condensed results
+    jb.dump(dictionary, path)
+    print(f'Prediction Accuracy: {acc * 100}%')
+    return dictionary
