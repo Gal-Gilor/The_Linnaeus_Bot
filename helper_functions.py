@@ -579,3 +579,47 @@ def find_wrong_classification(images, labels, predictions):
     '''
     indices =  np.where(labels != predictions)
     return images[indices]
+
+
+def plot_bar_graph(x, y, title, ytitle, xtitle):
+    '''
+    This function creates a simple bar graph
+    plot_bar_graph(x, y, title, ytitle, xtitle):
+    Input:
+        x: X axis data
+        y: Y axis data
+        title: Graph title (string)
+        ytitle: Y axis title (string)
+        xtitle: X axis title (string)
+    '''
+    fig = go.Figure()
+    
+    # add trace
+    fig.add_trace(go.Bar(x = x,
+                         y = y)
+                 )
+    
+    # add labels, change figure/font sizes, and remove grid lines
+    fig.update_layout(autosize=False,
+                      width=600,
+                      height=550,
+                      
+                      xaxis=go.XAxis(
+                          title=xtitle,
+                          titlefont=dict(size=18),
+                          showgrid=False),
+
+                      yaxis=go.layout.YAxis(
+                          title_text=ytitle,
+                          titlefont=dict(size=18),
+                          showgrid=False),
+
+                      title=go.layout.Title(
+                          text=title,
+                          font=dict(size=22),
+                          xref='paper')
+                      )
+
+    fig.update_yaxes(automargin=True)
+    fig.show()
+    return
