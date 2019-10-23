@@ -113,3 +113,5 @@ test_images
 
 # pickles
 .pkl
+.PKL
+.pkI
