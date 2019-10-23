@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, recall_score
 import pydot
 import tensorflow as tf
-from tf import keras
+from tensorflow import keras
 from keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten, Input, MaxPool2D, UpSampling2D
 from keras.models import Sequential, load_model, Model
 from keras.utils import to_categorical, plot_model, vis_utils
@@ -528,24 +528,27 @@ def plot_confusion_matrix(y_test, y_pred, class_names, save=None):
     Returns:
         Returns confusion matrix plot
     '''
-    matfig = plt.figure(figsize=(11, 10))
+    plt.rcParams["axes.grid"] = False
+    plt.rcParams['figure.figsize'] = 10, 10
+    plt.rcParams['axes.spines.right'] = True
+    plt.rcParams['axes.spines.top'] = True
+    
     matrix = confusion_matrix(y_test, y_pred)
-    plt.matshow(matrix, cmap=plt.cm.Purples, aspect=1.2,
-                alpha=0.6, fignum=matfig.number)
-    plt.grid(b=None)
-    # add color bar
-    plt.colorbar()
+    plt.matshow(matrix, cmap=plt.cm.Blues, aspect=1.2,
+                alpha=0.6)
+    
+    
 
     # add title and Axis Labels
     plt.title('Confusion Matrix', fontsize=20)
     plt.ylabel('Actual', fontsize=16)
     plt.xlabel('Predicted', fontsize=16)
-    plt.grid(b=None)
+    
     # add appropriate Axis Scales
     tick_marks = np.arange(len(class_names))
-    plt.xticks(tick_marks, class_names, rotation=45)
-    plt.yticks(tick_marks, class_names)
-    plt.grid(b=None)
+#     plt.xticks(tick_marks, class_names, rotation=45)
+#     plt.yticks(tick_marks, class_names)
+    
 
     # add Labels to Each Cell
     thresh = matrix.max() / 2.
@@ -557,13 +560,13 @@ def plot_confusion_matrix(y_test, y_pred, class_names, save=None):
                  horizontalalignment="center",
                  color="black")
 
-    plt.grid(b=None)
+    
     if save:
-        plt.grid(b=None)
         plt.tight_layout()
         plt.savefig(f'{save}_cm.png')
-    plt.grid(b=None)
-    plt.show()
+    
+    # add color bar
+    plt.colorbar()
     return
 
 
@@ -605,7 +608,7 @@ def plot_bar_graph(x, y, title, ytitle, xtitle):
                       width=600,
                       height=550,
 
-                      xaxis=go.XAxis(
+                      xaxis=go.layout.XAxis(
                           title=xtitle,
                           titlefont=dict(size=18),
                           showgrid=False),
