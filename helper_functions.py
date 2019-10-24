@@ -532,23 +532,19 @@ def plot_confusion_matrix(y_test, y_pred, class_names, save=None):
     plt.rcParams['figure.figsize'] = 10, 10
     plt.rcParams['axes.spines.right'] = True
     plt.rcParams['axes.spines.top'] = True
-    
+
     matrix = confusion_matrix(y_test, y_pred)
     plt.matshow(matrix, cmap=plt.cm.Blues, aspect=1.2,
                 alpha=0.6)
-    
-    
 
     # add title and Axis Labels
     plt.title('Confusion Matrix', fontsize=20)
     plt.ylabel('Actual', fontsize=16)
     plt.xlabel('Predicted', fontsize=16)
-    
+
     # add appropriate Axis Scales
-    tick_marks = np.arange(len(class_names))
-#     plt.xticks(tick_marks, class_names, rotation=45)
-#     plt.yticks(tick_marks, class_names)
-    
+    plt.xticks(class_names, rotation=45)
+    plt.yticks(class_names)
 
     # add Labels to Each Cell
     thresh = matrix.max() / 2.
@@ -560,11 +556,10 @@ def plot_confusion_matrix(y_test, y_pred, class_names, save=None):
                  horizontalalignment="center",
                  color="black")
 
-    
     if save:
         plt.tight_layout()
         plt.savefig(f'{save}_cm.png')
-    
+
     # add color bar
     plt.colorbar()
     return
