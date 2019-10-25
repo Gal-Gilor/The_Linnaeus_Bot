@@ -120,10 +120,13 @@ def save_train_test(inpath, outpath, n, j, extension='jpg'):
     save_train_test(inpath, outpath, extension, n, label):
     This function converts an image file to a numpy array, normalizes the the pixel values and saves
     Input:
+        inpath: path to the images
         outpath: The path where you want to save the file
         n: int. slicing the matrix
         j: int. slicing the matrix
-
+        extension: image extention (png, jpg) default=jpg
+    returns:
+        Saves the numpy array in the given output
     '''
     images = []
     for file in tqdm(glob(f'{inpath}*.{extension}')[n:j]):
@@ -134,7 +137,6 @@ def save_train_test(inpath, outpath, n, j, extension='jpg'):
 
     images = np.asarray(images)
     np.save(outpath, images)
-    del images
     return
 
 
@@ -542,14 +544,7 @@ def plot_confusion_matrix(y_test, y_pred, class_names, save=None):
     plt.ylabel('Actual', fontsize=16)
     plt.xlabel('Predicted', fontsize=16)
 
-    # add appropriate Axis Scales
-    plt.xticks(class_names, rotation=45)
-    plt.yticks(class_names)
-
-    # add Labels to Each Cell
-    thresh = matrix.max() / 2.
-
-    # iterate through the confusion matrix and append the labels
+    # append text
     for i, j in itertools.product(range(matrix.shape[0]),
                                   range(matrix.shape[1])):
         plt.text(j, i, matrix[i, j],
@@ -580,51 +575,6 @@ def find_wrong_classification(images, labels, predictions):
     return images[indices]
 
 
-def plot_bar_graph(x, y, title, ytitle, xtitle):
-    '''
-    This function creates a simple bar graph
-    plot_bar_graph(x, y, title, ytitle, xtitle):
-    Input:
-        x: X axis data
-        y: Y axis data
-        title: Graph title (string)
-        ytitle: Y axis title (string)
-        xtitle: X axis title (string)
-    '''
-    fig = go.Figure()
-
-    # add trace
-    fig.add_trace(go.Bar(x=x,
-                         y=y)
-                  )
-
-    # add labels, change figure/font sizes, and remove grid lines
-    fig.update_layout(autosize=False,
-                      width=600,
-                      height=550,
-
-                      xaxis=go.layout.XAxis(
-                          title=xtitle,
-                          titlefont=dict(size=18),
-                          showgrid=False),
-
-                      yaxis=go.layout.YAxis(
-                          title_text=ytitle,
-                          titlefont=dict(size=18),
-                          showgrid=False),
-
-                      title=go.layout.Title(
-                          text=title,
-                          font=dict(size=22),
-                          xref='paper')
-                      )
-
-    fig.update_yaxes(automargin=True)
-    fig.show()
-    return
-
-
-# un_classes = supervised_model.predict_classes(unsuper_images)
 def save_predict_class(model, images, labels, path):
     '''
     This function compiles and saves different prediction metrics
