@@ -11,20 +11,18 @@ This project utilizes deep learning neural networks to classify images of damsel
 ### Table of Contents
 
    - [Tech Stack](#tech-stack)
-
+  
    - [Process](#process)
-
+  
    - [Data and EDA](#data-and-eda)
        
-   - [Part 1: Supervised](#part-1-supervised-models)
+   - [Supervised Model](#supervised-model)
 
-   - [Part 2: Unsupervised](#part-2-unsupervised-models)
+   - [Unsupervised Model](#unsupervised-model)
 
    - [Future Improvements](#future-improvements)
 
 ## Tech Stack
-[Keras](https://keras.io/ "Keras")
-
 
 - Python libraries
     - [NumPy](https://www.numpy.org/ "Numpy")
@@ -44,40 +42,22 @@ The original dataset contained 82 GB of images for various living organisms. Due
 
 <img src=Images/image_pie.png alt="Classes pie chart" width="400"/>
 
+As part of the image processing stage I resized every image to 256 by 256 pixels, grayscaling, converting to image to a Numpy array, and normalized the pixel values by dividing each pixel by 255. Additionally, I augmented the data and created the mirror image to doubled the number of available images.
 
-We completed a number of pre-processing and data cleaning steps including removing punctuation and stop words, making all letters lowercase, and lemmatizing words. Each of these steps was performed so that words could be grouped together based on their lemma and weren't instead treated as individual words.
+<img src=Images/class_balance.png alt="Final image count" width="400"/>
 
-As part of our exploration, we looked at the most common words and bigrams in our corpus. Many of the most common words ultimately get removed as stop words or through our vectorization strategy in which we require words to appear in less than 50% of the documents. Interestingly, many of the most common bigrams become key components in the topics produced by the unsupervised LDA model.
+### Creating the Test Set
 
-![Most common words](Images/Most_common_words.png) 
+After prepairing the images for analysis I had 16924 (215 MB) damselfly, and 18394 (237 MB) dragonfly images. The training set comprised of 12694 damselfly and 13797 dragonfly images (26491‬ images - 75% of the data). The test set comprised of  4230 damselfly and 4597 dragonfly images (8827‬ images - 25% of the data). Due to limited computational power I saved the training and testing sets for damselflies and dragonflies separately in 4 different .npy files.
 
-![Most common bigrams](Images/Most_common_bigrams.png)
+## Supervised model
 
-We also engineered a number of features. However, these were ultimately excluded from the models as it became evident that these features had little impact on leading to accurate predictions of ratings.
 
-- number of words in a review
-- number of exclamation points used in a review
-- number of question markers used in a review
+![CNN Architecture](Images/CNN_arch.png)
 
-## Part 1: Supervised models
+<img src=test_images/supervised_cm.png alt="Final image count" width="400"/>
 
-Here we only discuss our initial and final models. For a look at the additional models we tested, please see the python notebook titled Supervised_Models.
-
-1. Dummy Classifier:
-   - The Dummy Classifier acheieved an accuracy score of 20%, given our data is distributed across 5 rating categories.
-
-2. Multinomial Naive Bayes
-   - The Multinomial Naive Bayes model was able to achieve the highest accuracy score of 47%
-   - We used NLTK's TF-IDF vectorizer with the following parameters:
-      - A maximum of 10,000 features
-      - Each word was required to appear in a minimum of 2 reviews
-      - Each word was required to appear in no more than 50% of the reviews
- 
-![](/Images/confusion.png)
-
-The confusion matrix shows the accuracy of the model across rating buckets. The model performed best when predicting ratings of 1 and 5, with 73% and 66% of the observations correctly classified, respectively. This is in line with our expectations, given these are likely to be the reviews with the most polarizing language. Additionally, the model performed worst on reviews with ratings of 2 given we had the fewest observations in this rating bucket.
-
-## Part 2: Unsupervised models
+## Unsupervised models
 
 ### Topic Modeling with LDA
 
