@@ -68,9 +68,21 @@ To complete the task of training the CNN, batching the data was necessary. Every
 
 <img src=Images/model_accuracy.png alt="Training accuracy history" width="400"/> <img src=Images/model_accuracy.png alt="Training loss history" width="400"/>
 
+### Classified Correctly
+
+#### Original 
+![Dragonfly](Images/correct_dragon.png)
+
+<img src=Images/activation0_vis.jpg alt="what the models sees at the first layer" width="400"/> <img src=Images/activation1_vis.jpg alt="what the models sees at the second layer" width="400"/>
+
+<img src=Images/activation4_vis.jpg alt="what the models sees at the forth layer" width="400"/> <img src=Images/activation5_vis.jpg alt="what the models sees at the fifth layer" width="400"/>
+
+
 After training the model on 24000 images the model achieves 85%~ accuracy on the testing set (8827‬ images)
 
 ![Confusion matrix](Images/supervised_cm_label.png)
+
+after viewing some of the images the model misclassified 
 
 ## Unsupervised models
 
