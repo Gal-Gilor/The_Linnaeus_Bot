@@ -66,10 +66,17 @@ To complete the task of training the CNN, batching the data was necessary. Every
   * Retrain on 4000 New Images
   * Repeat 6 Times (24000 images total)
 
-![CNN Architecture](Images/model_loss.png)![CNN Architecture](Images/model_accuracy.png)
-<img src=Images/model_accuracy.png alt="Final image count" width="400"/> <img src=Images/model_accuracy.png alt="Final image count" width="400"/>
+<img src=Images/model_accuracy.png alt="Training accuracy history" width="400"/> <img src=Images/model_accuracy.png alt="Training loss history" width="400"/>
+
+After training the model on 24000 images the model achieves 85%~ accuracy on the testing set (8827‬ images)
+
+![Confusion matrix](Images/supervised_cm_label.png)
 
 ## Unsupervised models
+
+#### Model Architecture
+
+![Autoencoder Architecture](Images/autoencoder_sum.png)
 
 ### Topic Modeling with LDA
 
