@@ -1,12 +1,10 @@
 # The_Linnaeus_Bot
 
-Contributors: Gal Gilor
-
-_For those interested in a shorter recap:_ [_Presentation Slides_](https://docs.google.com/presentation/d/1xrlXFUVkA1hmsYD6TaPTXyuSGk6ACH_ZHcb40gw1cX0/edit?usp=sharing "Presentation")
-
 ## Introduction
 
-This project utilizes deep learning neural networks to classify images of damselflies and dragonflies, and generate images through image de-noising techniques (auto-encoders).
+This project utilizes deep learning neural networks to classify images of damselflies and dragonflies and to generate images through image de-noising techniques (auto-encoders).
+
+_For those interested in a shorter recap:_ [_Presentation Slides_](https://docs.google.com/presentation/d/1xrlXFUVkA1hmsYD6TaPTXyuSGk6ACH_ZHcb40gw1cX0/edit?usp=sharing "Presentation")
 
 ### Table of Contents
 
@@ -25,16 +23,19 @@ This project utilizes deep learning neural networks to classify images of damsel
 ## Tech Stack
 
 - Python libraries
+  
     - [NumPy](https://www.numpy.org/ "Numpy")
+
     - [Pillow](https://pillow.readthedocs.io/en/stable/ "Pillow")
     - [Keras](https://keras.io/ "Keras")
+
     - [Scikit-learn](https://scikit-learn.org/stable/ "Sklearn")
     - [Matplotlib](https://matplotlib.org/ "Matplotlib")
     - [Plotly](https://plot.ly/ "Plotly")
 
 ## Process
 
-For this project, I used part of a google competition dataset; [iNat Challange 2019](https://sites.google.com/view/fgvc6/competitions/inaturalist-2019/ "iNat Challange 2019"). The dataset contained 8462 damselfly images (1.72 GB) and 9197 dragonfly images (1.76 GB). All the images were resized with to have a maximum dimension of 800 pixels and saved as JPEG. I then processed the images and trained a convolutional neural network (CNN) to recognize and distinguish between a dragonfly and a damselfly. Additionally, I experimented with image de-noising techniques using CNN's to generate dragonfly images for classification purposes.
+For this project, I used part of a google competition dataset; [iNat Challange 2019](https://sites.google.com/view/fgvc6/competitions/inaturalist-2019/ "iNat Challange 2019"). The dataset contained 8462 damselfly images (1.72 GB) and 9197 dragonfly images (1.76 GB). All the images were resized to have a maximum dimension of 800 pixels and saved as JPEG. I then process the images and train a convolutional neural network (CNN) to distinguish between a dragonfly and a damselfly. Additionally, I experimented with image de-noising techniques using CNN's to generate images of dragonflies for classification purposes.
   
 ## Data and EDA
 
@@ -42,20 +43,31 @@ The original dataset contained 82 GB of images for various living organisms. Due
 
 <img src=Images/image_pie.png alt="Classes pie chart" width="400"/>
 
-As part of the image processing stage I resized every image to 256 by 256 pixels, grayscaling, converting to image to a Numpy array, and normalized the pixel values by dividing each pixel by 255. Additionally, I augmented the data and created the mirror image to doubled the number of available images.
+As part of the image processing stage, I resize every image to 256 by 256 pixels, grayscale, convert the image to a Numpy array, and normalized the pixel values by dividing every pixel by 255. Additionally, I augmented the data and created the mirror image to doubled the number of available images.
 
 <img src=Images/class_balance.png alt="Final image count" width="400"/>
 
 ### Creating the Test Set
 
-After prepairing the images for analysis I had 16924 (215 MB) damselfly, and 18394 (237 MB) dragonfly images. The training set comprised of 12694 damselfly and 13797 dragonfly images (26491‬ images - 75% of the data). The test set comprised of  4230 damselfly and 4597 dragonfly images (8827‬ images - 25% of the data). Due to limited computational power I saved the training and testing sets for damselflies and dragonflies separately in 4 different .npy files.
+After preparing the images for analysis I had 16924 (215 MB) damselfly images, and 18394 (237 MB) dragonfly images. The training set comprised of 12694 damselfly and 13797 dragonfly images (26491‬ images; 75% of the data). The test set comprised of  4230 damselfly and 4597 dragonfly images (8827‬ images; 25% of the data). Due to limited computational power, I saved the training and testing sets for damselflies and dragonflies separately in 4 different .npy files.
 
 ## Supervised model
 
+#### Model Architecture
 
 ![CNN Architecture](Images/CNN_arch.png)
 
-<img src=test_images/supervised_cm.png alt="Final image count" width="400"/>
+To complete the task of training the CNN, batching the data was necessary. Every batch consists of 4000 images, of which 5% reserved for validation purposes.
+
+  * Train on 4000 Images
+  * Save Weights
+  * Clear Cache
+  * Reload Weights
+  * Retrain on 4000 New Images
+  * Repeat 6 Times (24000 images total)
+
+![CNN Architecture](Images/model_loss.png)![CNN Architecture](Images/model_accuracy.png)
+<img src=Images/model_accuracy.png alt="Final image count" width="400"/> <img src=Images/model_accuracy.png alt="Final image count" width="400"/>
 
 ## Unsupervised models
 
