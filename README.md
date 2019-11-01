@@ -8,9 +8,7 @@ _For those interested in a shorter recap:_ [_Presentation Slides_](https://docs.
 
 ### Table of Contents
 
-   - [Tech Stack](#tech-stack)
-  
-   - [Process](#process)
+   - [Technical Description](#technical-description)
   
    - [Data and EDA](#data-and-eda)
        
@@ -20,22 +18,22 @@ _For those interested in a shorter recap:_ [_Presentation Slides_](https://docs.
 
    - [Future Improvements](#future-improvements)
 
-## Tech Stack
+## Technical Description
 
-- Python libraries
-  
-    - [NumPy](https://www.numpy.org/ "Numpy")
-
-    - [Pillow](https://pillow.readthedocs.io/en/stable/ "Pillow")
-    - [Keras](https://keras.io/ "Keras")
-
-    - [Scikit-learn](https://scikit-learn.org/stable/ "Sklearn")
-    - [Matplotlib](https://matplotlib.org/ "Matplotlib")
-    - [Plotly](https://plot.ly/ "Plotly")
-
-## Process
+### Process
 
 For this project, I used part of a google competition dataset; [iNat Challange 2019](https://sites.google.com/view/fgvc6/competitions/inaturalist-2019/ "iNat Challange 2019"). The dataset contained 8462 damselfly images (1.72 GB) and 9197 dragonfly images (1.76 GB). All the images were resized to have a maximum dimension of 800 pixels and saved as JPEG. I then process the images and train a convolutional neural network (CNN) to distinguish between a dragonfly and a damselfly. Additionally, I experimented with image de-noising techniques using CNN's to generate images of dragonflies for classification purposes.
+
+Python libraries
+
+  - [NumPy](https://www.numpy.org/ "Numpy")
+
+  - [Pillow](https://pillow.readthedocs.io/en/stable/ "Pillow")
+  - [Keras](https://keras.io/ "Keras")
+
+  - [Scikit-learn](https://scikit-learn.org/stable/ "Sklearn")
+  - [Matplotlib](https://matplotlib.org/ "Matplotlib")
+  - [Plotly](https://plot.ly/ "Plotly")
   
 ## Data and EDA
 
@@ -68,21 +66,53 @@ To complete the task of training the CNN, batching the data was necessary. Every
 
 <img src=Images/model_accuracy.png alt="Training accuracy history" width="400"/> <img src=Images/model_accuracy.png alt="Training loss history" width="400"/>
 
+After training the model on 24000 images the model achieves 85%~ accuracy on the testing set (8827‬ images)
+
+![Confusion matrix](Images/supervised_cm_label.png)
+
+Due to the large volumes of data, I was unable to ensure the image quality. Some of the images were blurry, some with dominant background noise, and some contained more than 1 animal.  Thus, making the training and classification harder.
+
 ### Classified Correctly
 
 #### Original 
 ![Dragonfly](Images/correct_dragon.png)
 
-<img src=Images/activation0_vis.jpg alt="what the models sees at the first layer" width="400"/> <img src=Images/activation1_vis.jpg alt="what the models sees at the second layer" width="400"/>
+#### What the Model Sees - First CNN Layer
 
-<img src=Images/activation4_vis.jpg alt="what the models sees at the forth layer" width="400"/> <img src=Images/activation5_vis.jpg alt="what the models sees at the fifth layer" width="400"/>
+![what the models sees at the first layer](Images/activation0_vis.jpg)
 
+#### What the Model Sees - Second CNN Layer
 
-After training the model on 24000 images the model achieves 85%~ accuracy on the testing set (8827‬ images)
+![what the models sees at the second layer](Images/activation1_vis.jpg)
 
-![Confusion matrix](Images/supervised_cm_label.png)
+#### What the Model Sees - Third CNN Layer
 
-after viewing some of the images the model misclassified 
+![what the models sees at the forth layer](Images/activation4_vis.jpg)
+
+#### What the Model Sees - Forth CNN Layer
+
+![what the models sees at the fifth layer](Images/activation5_vis.jpg)
+
+### Misclassified
+
+#### Original 
+![Dragonfly](Images/miss_dragon.png)
+
+#### What the Model Sees - First CNN Layer
+
+![what the models sees at the first layer](Images/miss_activation_20_vis.jpg)
+
+#### What the Model Sees - Second CNN Layer
+
+![what the models sees at the second layer](Images/miss_activation_21_vis.jpg)
+
+#### What the Model Sees - Third CNN Layer
+
+![what the models sees at the forth layer](Images/miss_activation_24_vis.jpg)
+
+#### What the Model Sees - Forth CNN Layer
+
+![what the models sees at the fifth layer](Images/miss_activation_25_vis.jpg)
 
 ## Unsupervised models
 
@@ -90,27 +120,18 @@ after viewing some of the images the model misclassified
 
 ![Autoencoder Architecture](Images/autoencoder_sum.png)
 
-### Topic Modeling with LDA
+### Convolutional Autoencoder - Noise Reduction Technique
 
-Before running the model we noticed additional    processing is needed. We began by removing single character words and all the stand-alone digits. Unsure about the pros and cons of the different libraries for NLP, we utilized both Gensim and scikit-learn to run LDA models for topic modeling.
+There's still a lot to learn about unsupervised neural networks (NN). In this experiment, I train a convolutional autoencoder on 18394 dragonfly images, of which 2394 images I reserve for validation purposes.
+Because of the large volumes of data, training the autoencoder model on a regular local device is a slow process. Thus, it's still a work in process. However,  using said de-noising technique, I manage to generate low quality (after 16) dragonfly images. As part of the experiment, I attempt to classify said generated images.
 
-- scikit-learn
-  1) We chose 14 as the number of topics (Amazon electronics department is made out of 14 sections). Additionally, we filtered out words that appeared in more than 50% of the reviews and words that appeared in less than 10 reviews. Looking at topics, we noticed that some words appear on several topics, meaning the topics are not independent of each other.
+![Original image](Images/unsupervised_dragon_actual.jpg)
+_Original image_
 
-  2) We lowered the number of topics to 10 filtered words that appeared in more than 50% of reviews, and words that appeared in less than 15 reviews. Lowering the number of topics helped address the dependency problem between topics.
+![Generated image](Images/unsupervised_dragon_created.jpg)
+_Generated image_
 
-![Sckit-learn 14 topics LDA model](Images/sklearn_lda_14topics.PNG)
-_14 topics LDA model_
-
-![Sckit-learn 10 topics  bi-gram LDA model](Images/sklearn_lda_bi_10topics.PNG)
-_10 topics LDA model_
-
-- Gensim
-   1) Lowering the number of topics and filtering words that appeared in over 50% of documents seemed to work well, thus we reused those hyperparameters. Also, we filtered the words that appeared in less than 10 reviews.
-
-Every model returned slightly different results. The gensim LDA model created the most distinguishable topics in our eyes. Unfortunately, due to a lack of computing power and time, we were unable to use topic modeling for classification purposes.
-
-![Gensim 10 topics wordclouds](Images/all_topic_wordclouds.PNG)
+Suprisingly, the 
 
 ## Future Improvements
 
