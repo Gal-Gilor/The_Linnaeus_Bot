@@ -122,8 +122,8 @@ Due to the large volumes of data, I was unable to ensure the image quality. Some
 
 ### Convolutional Autoencoder - Noise Reduction Technique
 
-There's still a lot to learn about unsupervised neural networks (NN). In this experiment, I train a convolutional autoencoder on 18394 dragonfly images, of which 2394 images I reserve for validation purposes.
-Because of the large volumes of data, training the autoencoder model on a regular local device is a slow process. Thus, it's still a work in process. However,  using said de-noising technique, I manage to generate low quality (after 16) dragonfly images. As part of the experiment, I attempt to classify said generated images.
+There's still a lot to learn about unsupervised neural networks. In this experiment, I train a convolutional autoencoder on 18394 dragonfly images, of which 2394 images I reserve for validation purposes.
+Because of the large volumes of data, training the autoencoder model on a regular local device is a slow process. Thus, it's still a work in process. However,  using said de-noising technique, I manage to generate low quality (after 15 epochs) dragonfly images. Additionally, as part of the experiment, I attempt to classify said generated images.
 
 ![Original image](Images/unsupervised_dragon_actual.jpg)
 _Original image_
@@ -131,12 +131,16 @@ _Original image_
 ![Generated image](Images/unsupervised_dragon_created.jpg)
 _Generated image_
 
-Suprisingly, the 
+I then attempted to classify the 2394 dragonfly images using the pre-trained classification model.
+Surprisingly, the model classified correctly only 825 images (34%), less than the random chance for a binary choice (50%).
+Upon careful examination, I couldn't find errors such as wrong labeling in the code that could explain the outcome. Further inquiry is required.
+
+![Confusion matrix](Images/unsupervised_cm_label.png)
 
 ## Future Improvements
 
-1. Optimize text cleaning process
-    - Given this was our first time working with NLP techniques, we did not create an optimal pipeline for NLP pre-processing. We tokenized and lemmatized our text before realizing that NLTK's vectorizers take in a corpus of documents, rather than a list of tokens, to create vectors.
+1. Improve Image Preprocessing
+    - Given this my first time working with image data and despite the time constraints I am happy with the classification results. However, I believe additional data preprocessing such as removing background noise and focusing on the insect before image resizing would improve classification results.
 
-2. Use topics derived from LDA in supervised classification algorithms
-    - We would have liked to have used the topics derived from the unsupervised learning algorithm, LDA, as classes in a supervised classification model.
+2. Improve Unsupervised Model
+   - Examining the change in loss throughout the training,it is evident a deeper neural network autoencoder, and additional training would increase the image generator quality. Also, due to the fact, my local machine was unable able to provide adequate resources for training the model, I consider outsourcing the training process to external services such as AWS's SageMaker.
