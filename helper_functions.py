@@ -362,7 +362,7 @@ def plot_bar_graph(x, y, title, ytitle, xtitle, save=False):
                       height=550,
 
                       xaxis=go.layout.XAxis(
-                          title_=xtitle,
+                          title_text=xtitle,
                           titlefont=dict(size=18),
                           showgrid=False),
 
