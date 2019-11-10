@@ -38,7 +38,7 @@ def process_images(inpath, outpath, dim_tuple, start=1, extension='jpg'):
         Returns a folder containing double amount of images
     '''
     # open images
-    for file in tqdm(glob(f'{inpath}*.{extension}')):
+    for file in tqdm(glob('{}*.{}'.format(inpath, extension))):
         with Image.open(file) as img:
             # rotate image
             rotated_images = rotate_images(img)
@@ -110,8 +110,8 @@ def save_preprocessed_images(processed_images, outpath, start, extension='jpg'):
     Returns:
         Does not return a variable. Creates image files 
     '''
-    [image.save(f'{outpath}\\image{i}.{extension}')
-     for i, image in enumerate(processed_images, start)]
+    [image.save('{}\\image{}.{}'.format(outpath, i, extension))
+    for i, image in enumerate(processed_images, start)]
     return
 
 
@@ -129,7 +129,7 @@ def save_train_test(inpath, outpath, n, j, extension='jpg'):
         Saves the numpy array in the given output
     '''
     images = []
-    for file in tqdm(glob(f'{inpath}*.{extension}')[n:j]):
+    for file in tqdm(glob('{}*.{}'.format(inpath, extension))[n:j]):
         with Image.open(file) as img:
             np_image = np.array(img) / 255
             np_image = np_image.expand_dims(np_image, axis=0)
@@ -220,7 +220,7 @@ def create_model(weights_path=None, weights_name=None):
                   optimizer='Adam', metrics=['accuracy'])
     # optional: loading previous weights
     if weights_path and weights_name:
-        model.load_weights(f'{weights_path}{weights_name}')
+        model.load_weights('{}{}'.format(weights_path, weights_name))
     return model
 
 
@@ -300,11 +300,11 @@ def plot_train_history(data, title, ytitle, xtitle, save=False):
     # add traces
     fig.add_trace(go.Scatter(y=data[0],
                              mode='lines',
-                             name=f'Training {ytitle}'))
+                             name='Training {}'.format(ytitle)))
 
     fig.add_trace(go.Scatter(y=data[1],
                              mode='lines',
-                             name=f'Validation {ytitle}'))
+                             name='Validation {}'.format(ytitle)))
 
     # add labels, change figure/font sizes, and remove grid lines
     fig.update_layout(autosize=False,
@@ -330,7 +330,7 @@ def plot_train_history(data, title, ytitle, xtitle, save=False):
     fig.update_yaxes(automargin=True)
     # optional: saving image to a specific location
     if save:
-        fig.write_image(f'./Images/model_{save}.png')
+        fig.write_image('./Images/model_{}.png'.format(save))
     fig.show()
     return
 
@@ -380,7 +380,7 @@ def plot_bar_graph(x, y, title, ytitle, xtitle, save=False):
     fig.update_yaxes(automargin=True)
     # optional: saving image to a specific location
     if save:
-        fig.write_image(f'./Images/model_{save}.png')
+        fig.write_image('./Images/model_{}.png'.format(save))
     fig.show()
     return
 
@@ -434,7 +434,7 @@ def create_unsupervised_model(weights_path=None, weights_name=None, shape=(256, 
     model.compile(optimizer='Adam', loss='mse')
     # optional: loading previous weights
     if weights_path and weights_name:
-        model.load_weights(f'{weights_path}{weights_name}')
+        model.load_weights('{}{}'.format(weights_path, weights_name))
 
     return model
 
@@ -490,7 +490,7 @@ def plot_intermediate_activation(model, images, bottom=0, top=3, save=False):
         plt.title(layer_name)
         plt.imshow(display_grid, aspect='auto', cmap='viridis')
         if save:
-            plt.savefig(f'activation_{save}_vis.jpg')
+            plt.savefig('activation_{}_vis.jpg'.format(save))
             save += 1
     return
 
@@ -512,8 +512,8 @@ def print_metrics(labels, predictions, print_score=True):
     acc = round(accuracy_score(labels, predictions)*100, 2)
 
     if print_score:
-        print(f"Recall: {recall}")
-        print(f"Accuracy: {acc}")
+        print("Recall: {}".format(recall))
+        print("Accuracy: {}".format(acc))
 
     return recall, acc
 
@@ -553,7 +553,7 @@ def plot_confusion_matrix(y_test, y_pred, class_names, save=None):
 
     if save:
         plt.tight_layout()
-        plt.savefig(f'{save}_cm.png')
+        plt.savefig('{}_cm.png'.format(save))
 
     # add color bar
     plt.colorbar()
@@ -609,5 +609,5 @@ def save_predict_class(model, images, labels, path):
 
     # save the condensed results
     jb.dump(dictionary, path)
-    print(f'Prediction Accuracy: {acc * 100}%')
+    print('Prediction Accuracy: {}%'.format(acc * 100))
     return dictionary
