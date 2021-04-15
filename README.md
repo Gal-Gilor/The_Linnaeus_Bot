@@ -143,4 +143,7 @@ Upon careful examination, I couldn't find errors such as wrong labeling in the c
     - Given this my first time working with image data and despite the time constraints I am happy with the classification results. However, I believe additional data preprocessing such as removing background noise and focusing on the insect before image resizing would improve classification results.
 
 2. Improve Unsupervised Model
-   - Examining the change in loss throughout the training,it is evident a deeper neural network autoencoder, and additional training would increase the image generator quality. Also, due to the fact, my local machine was unable able to provide adequate resources for training the model, I consider outsourcing the training process to external services such as AWS's SageMaker.
+   - Examining the change in loss throughout the training,it is evident a deeper neural network autoencoder, and additional training would increase image quality. Also, due to the fact, my local machine was unable able to provide adequate resources for training the model, I consider outsourcing the training process to external services such as AWS's SageMaker.
+
+3. Combine the two models and create a Generative Neural Network (GAN) model
+   - I would love to see how well the unsupervised can reconstruct the dragonflies images. Also, test wehther the classifier can distingush between computer generated reconstructions, and real images
