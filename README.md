@@ -146,4 +146,4 @@ Upon careful examination, I couldn't find errors such as wrong labeling in the c
    - Examining the change in loss throughout the training,it is evident a deeper neural network autoencoder, and additional training would increase image quality. Also, due to the fact, my local machine was unable able to provide adequate resources for training the model, I consider outsourcing the training process to external services such as AWS's SageMaker.
 
 3. Combine the two models and create a Generative Neural Network (GAN) model
-   - I would love to see how well the unsupervised can reconstruct the dragonflies images. Also, test wehther the classifier can distingush between computer generated reconstructions, and real images
+   - I would love to see how well the unsupervised can reconstruct the dragonflies images. Also, test whether the classifier can distingush between computer generated reconstructions, and real images
