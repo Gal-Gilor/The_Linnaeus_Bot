@@ -107,9 +107,8 @@ venv.bak/
 # ignore saved models
 .sav
 
-# train histroy and test images
-train_history
-test_images
+# data
+data/
 
 # pickles
 .pkl
