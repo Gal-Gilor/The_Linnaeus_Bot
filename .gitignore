@@ -109,6 +109,7 @@ venv.bak/
 
 # data
 data/
+checkpoints/
 
 # pickles
 .pkl
