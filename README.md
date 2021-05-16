@@ -147,3 +147,13 @@ Upon careful examination, I couldn't find errors such as wrong labeling in the c
 
 3. Combine the two models and create a Generative Neural Network (GAN) model
    - I would love to see how well the unsupervised can reconstruct the dragonflies images. Also, test whether the classifier can distingush between computer generated reconstructions, and real images
+
+## Update
+
+I decided to update this model to include more out-of-the-box tools to develop the image classification model and training it using my GPU (GeForce GTX 1050).
+
+Instead of using my functions to augment and load the images, I decided to integrate ImageDataGenerator and flow_from_directory into my data processing pipeline.
+
+Even though I reduced the model's complexity and trained for fewer epochs, the new image classifier achieves 91%~ accuracy on the test set (6% increase).
+
+I don't know when I'll continue improving the autoencoder and connecting the two models, creating a GAN model as, at the moment, I'm focusing on learning PyTorch.
